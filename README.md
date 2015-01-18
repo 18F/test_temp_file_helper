@@ -59,13 +59,16 @@ The `SetupTestEnvironmentTask` properties:
 - `tmp_dir`: directory relative to `base_dir` used to set `TEST_TMPDIR`
 
 If an environment variable is already set, or if the corresponding property is
-not set on the +SetupTestEnvironmentTask+ object, the environment variable
+not set on the `SetupTestEnvironmentTask` object, the environment variable
 will not be set or updated.
 
 Then, create a `TempFileHelper` in your test's `setup` method, and call
 `TempFileHelper.teardown` in your test's `teardown` method.
 
 ```ruby
+require 'minitest/autorun'
+require 'test_temp_file_helper'
+
 class MyTest < ::Minitest::Test
   def setup
     @temp_file_helper = TestTempFileHelper::TempFileHelper.new
