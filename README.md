@@ -68,9 +68,10 @@ end
 
 The temporary directory containing all generated files and directories is
 set by the first of these items which is not `nil`:
-- the `tmp_dir` argument to `TempFileHelper.new`
-- the `TEST_TMPDIR` environment variable
-- `Dir.mktmpdir`
+
+1. the `tmp_dir` argument to `TempFileHelper.new`
+2. the `TEST_TMPDIR` environment variable
+3. `Dir.mktmpdir`
 
 The path to the temporary directory itself can be accessed via
 `TempFileHelper.tmpdir`.
