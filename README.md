@@ -42,27 +42,7 @@ $ gem install test_temp_file_helper
 
 ### Usage
 
-First, add the following to your `Rakefile`:
-
-```ruby
-require 'test_temp_file_helper/rake'
-
-TestTempFileHelper::SetupTestEnvironmentTask.new do |t|
-  t.base_dir = File.dirname __FILE__
-  t.data_dir = File.join('test', 'data')
-  t.tmp_dir = File.join('test', 'tmp')
-end
-```
-The `SetupTestEnvironmentTask` properties:
-- `base_dir`: parent directory used to set the environment variables
-- `data_dir`: directory relative to `base_dir` used to set `TEST_DATADIR`
-- `tmp_dir`: directory relative to `base_dir` used to set `TEST_TMPDIR`
-
-If an environment variable is already set, or if the corresponding property is
-not set on the `SetupTestEnvironmentTask` object, the environment variable
-will not be set or updated.
-
-Then, create a `TempFileHelper` in your test's `setup` method, and call
+Create a `TempFileHelper` in your test's `setup` method, and call
 `TempFileHelper.teardown` in your test's `teardown` method.
 
 ```ruby
@@ -85,6 +65,16 @@ class MyTest < ::Minitest::Test
   end
 end
 ```
+
+The temporary directory containing all generated files and directories is
+set by the first of these items which is not `nil`:
+
+1. the `tmp_dir` argument to `TempFileHelper.new`
+2. the `TEST_TMPDIR` environment variable
+3. `Dir.mktmpdir`
+
+The path to the temporary directory itself can be accessed via
+`TempFileHelper.tmpdir`.
 
 ### Contributing
 

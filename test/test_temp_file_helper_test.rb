@@ -22,9 +22,9 @@ require "minitest/autorun"
 module TestTempFileHelper
   class TempFileHelperTest < ::Minitest::Test
     def setup
-      @relative_dir = File.join('temp_file_helper_test', 'testdir')
-      @absolute_dir = File.join ENV['TEST_TMPDIR'], @relative_dir
       @helper = TempFileHelper.new
+      @relative_dir = File.join('temp_file_helper_test', 'testdir')
+      @absolute_dir = File.join @helper.tmpdir, @relative_dir
     end
 
     def test_directory_creation_and_removal
