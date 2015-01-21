@@ -18,29 +18,27 @@ require "test_temp_file_helper/version"
 
 module TestTempFileHelper
   # Automatically generates and cleans up temporary files in automated tests.
-  # Performs its operations in the directory specified by the +TEST_TMPDIR+
-  # environment variable.
+  #
+  # The temporary directory containing all generated files and directories is
+  # set by the first of these items which is not +nil+:
+  # - the +tmp_dir+ argument to +TempFileHelper.new+
+  # - the +TEST_TMPDIR+ environment variable
+  # - +Dir.mktmpdir+
   class TempFileHelper
-    # @param tmpdir [String] (optional) if specified, overrides +TEST_TMPDIR+
-    def initialize(tmpdir: nil)
-      @tmpdir = tmpdir || ENV['TEST_TMPDIR']
-      @files = []
-      @dirs = []
+    attr_accessor :tmpdir
+
+    # @param tmpdir [String] (optional) if set, determines the temp dir
+    def initialize(tmp_dir: nil)
+      @tmpdir = tmp_dir || ENV['TEST_TMPDIR'] || Dir.mktmpdir
     end
 
     # Creates a temporary test directory relative to TEST_TMPDIR.
     # @param relative_path [String] directory to create
     # @return [String] File.join(@tmpdir, relative_path)
     def mkdir(relative_path)
-      components = relative_path.split(File::SEPARATOR)
-      components = components.delete_if {|i| i == '.'}
-      current = @tmpdir
-      until components.empty?
-        current = File.join current, components.shift
-        Dir.mkdir current unless File.exists? current
-        @dirs << current
-      end
-      @dirs.last 
+      new_dir = File.join @tmpdir, relative_path
+      FileUtils.mkdir_p new_dir
+      new_dir
     end
 
     # Creates a temporary file relative to TEST_TMPDIR.
@@ -51,15 +49,13 @@ module TestTempFileHelper
       mkdir File.dirname(relative_path)
       filename = File.join(@tmpdir, relative_path)
       File.open(filename, 'w') {|f| f << content}
-      @files << filename
       filename
     end
 
     # Removes all files and directories created by the instance. Should be
     # called from the test's +teardown+ method.
     def teardown
-      @files.sort.uniq.each {|f| File.unlink f}
-      @dirs.sort.uniq.reverse.each {|d| Dir.rmdir d}
+      FileUtils.remove_entry @tmpdir
     end
   end
 end
