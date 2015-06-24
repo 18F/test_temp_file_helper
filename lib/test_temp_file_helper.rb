@@ -14,7 +14,10 @@
 #
 # @author Mike Bland (michael.bland@gsa.gov)
 
-require "test_temp_file_helper/version"
+require_relative "test_temp_file_helper/version"
+
+require 'fileutils'
+require 'tmpdir'
 
 module TestTempFileHelper
   # Automatically generates and cleans up temporary files in automated tests.
@@ -36,7 +39,7 @@ module TestTempFileHelper
     # @param relative_path [String] directory to create
     # @return [String] File.join(@tmpdir, relative_path)
     def mkdir(relative_path)
-      new_dir = File.join @tmpdir, relative_path
+      new_dir = File.join self.tmpdir, relative_path
       FileUtils.mkdir_p new_dir
       new_dir
     end
@@ -47,7 +50,7 @@ module TestTempFileHelper
     # @return [String] File.join(@tmpdir, relative_path)
     def mkfile(relative_path, content: '')
       mkdir File.dirname(relative_path)
-      filename = File.join(@tmpdir, relative_path)
+      filename = File.join self.tmpdir, relative_path
       File.open(filename, 'w') {|f| f << content}
       filename
     end
