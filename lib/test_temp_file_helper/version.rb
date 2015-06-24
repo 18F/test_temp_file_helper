@@ -15,5 +15,5 @@
 # @author Mike Bland (michael.bland@gsa.gov)
 
 module TestTempFileHelper
-  VERSION = "0.0.2"
+  VERSION = "0.0.3"
 end
